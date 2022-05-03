@@ -1,0 +1,76 @@
+//SSH
+- Configurar SSHv2 (domínio:cisco.com/chave: 2048bits/Tempo de login:30 segundos/Tentativas: 4/Ociosidade: 5min)
+## SSHv2 ##
+#conf t
+hostname RT_01
+ip domain-name cisco.com
+
+crypto key generate rsa general-keys modulus 2048
+ip ssh time-out 30
+ip ssh authentication-retries 4
+ip ssh version 2
+
+line vty 0 4
+ exec-timeout 5
+ transport input ssh
+
+====================================================================================================
+// Configuração de endereçamento IP
+- Configurar as interfaces em dual stack com descrição e endereçamento conforme tabela e topologia
+## Configurar Interface Dual Stack ##
+interface g/01
+ description LINK_WAN
+ ip add 201.0.0.2 255.255.255.252
+ ipv6 add 2001:cafe:face:b00c::2/64
+ ipv6 add fe80::2 link-local
+ no shutdown
+
+interface g/00
+ description LINK_LAN
+ ip add 192.168.10.1 255.255.255.0
+ ipv6 add 2001:db8:acad:10::1/64
+ ipv6 add fe80::1 link-local
+ no shutdown
+
+====================================================================================================
+// DHCP
+- Configurar o serviço DHCPv4 para as redes locais (DNS: 8.8.8.8). Excluir os endereços estáticos do DHCPv4 Pool
+- Configurar o serviço DHCPv6 Stateless para toda a rede local (DNS: 2001:4860:4860:8888)
+
+## DHCPv4 ##
+ip dhcp excluded-address 192.168.10.1
+ip dhcp pool Lanv4
+ network 192.168.10.0 255.255.255.0
+ default-router 192.168.10.1
+
+ ## DHCPv6 Stateless ##
+ ipv6 dhcp pool LANv6
+  dns-server 2001:4860:4860::8888
+
+interface g0/0
+ ipv6 dhcp server LANv6
+ ipv6 nd other-config-flag
+
+====================================================================================================
+//Configurações de SW 01
+-Configurar hostname: SW_01
+-Desabilitar resolução dinâmica de nomes
+-Configurar senha criptografada de acesso ao modo privilegiado como cisco
+-Criptografar todas as senhas
+-Configurar um banner de entrada "ACESSO RESTRITO"
+-Configurar usuário (admin) senha (cisco)
+-Autenticar console e VTY utilizando usuário local
+
+## Configurações básicas do SW_01 ##
+enable
+conf t
+hostname SW_01
+no ip domain-lookup
+enable secret cisco
+service password-encryption
+banner motd #ACESSO RESTRITO#
+username admin secret cisco
+line con 0
+ login local
+line vty 0 4
+ login local
