@@ -39,6 +39,7 @@ interface g/00
 
 ## DHCPv4 ##
 ip dhcp excluded-address 192.168.10.1
+ip dhcp excluded-address 192.168.10.2
 ip dhcp pool Lanv4
  network 192.168.10.0 255.255.255.0
  default-router 192.168.10.1
@@ -74,3 +75,22 @@ line con 0
  login local
 line vty 0 4
  login local
+
+====================================================================================================
+// Configuração de endereçamento IP (Gerenciamento)
+- Configurar interface SVI(vlan1) para fins de gerenciamento utilizando endereçamento conforme tabela
+- Configurar gateway padrão
+
+## Interface Gerenciamento SVI ##
+interface vlan 1
+ description Gerenciamento
+ ip add 192.168.10.2 255.255.255.0
+ no shutdown
+
+ip default-gateway 192.168.10.1
+
+do show ip interface brief (verificar os ip de interface)
+======================================================================================================
+//Roteamento (RT_01)
+- Configurar roteamento estático padrão (default) ipv4 e ipv6 para acesso a internet
+
