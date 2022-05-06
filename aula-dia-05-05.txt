@@ -1,0 +1,5 @@
+// Adicionando rota ipv4
+ip route 0.0.0.0 0.0.0.0 201.0.0.1
+
+// Adicionando rota ipv6
+ipv6 route ::/0 2001:cafe:face:b00c::1
