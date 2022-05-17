@@ -1,0 +1,37 @@
+########Etapas da configuração básica de um Roteador#############
+// Configurar o nome do Dispositivo
+Router(config)# hostname hostname
+
+// Proteger o modo EXEC privilegiado.
+Router(config)# enable secret password
+
+// Proteger o modo EXEC usuário.
+Router(config)# line console 0
+Router(config-line)# password password
+Router(config-line)# login
+
+// Proteger o acesso remoto Telnet/SSH
+Router(config-line)# line vty 0 4
+Router(config-line)# password password
+Router(config-line)# login
+Router(config-line)# transport input {ssh | telnet}
+
+// Proteger todas as senhas do arquivo de configuração.
+Router(config-line)# exit
+Router(config)# service password-encryption
+
+// Apresentar a notificação legal.
+Router(config)# banner motd # message #
+
+//  Salvar a configuração.
+Router(config)# end
+Router# copy running-config startup-config
+
+
+######## Configurar Interfaces do Roteador ########
+// A tarefa para configurar uma interface de roteador é muito semelhante a um SVI de gerenciamento em um switch. Especificamente, ele inclui a emissão dos seguintes comandos:
+Router(config)# interface type-and-number
+Router(config-if)# description description-text
+Router(config-if)# ip address ipv4-address subnet-mask
+Router(config-if)# ipv6 address ipv6-address/prefix-length
+Router(config-if)# no shutdown
